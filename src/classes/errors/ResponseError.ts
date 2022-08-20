@@ -1,11 +1,11 @@
-import { BaseErrorResponse } from "../types/ErrorResponse";
+import { BaseErrorResponse, ErrorCodes } from "../../types/ErrorResponse";
 
 export class ResponseError extends Error {
     private readonly code: number;
 
-    constructor(code?: number, message?: string) {
+    constructor(message?: string, code?: number) {
         super(message || "Unknown response error");
-        this.code = code || 100;
+        this.code = code || ErrorCodes.ResponseError;
         this.name = this.constructor.name;
     }
 

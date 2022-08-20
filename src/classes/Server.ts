@@ -1,43 +1,44 @@
 import { ServerOptions, WebSocketServer } from "ws";
 
+import { AbstractRequest } from "../types/AbstractRequest";
 import { WebSocketClient } from "../types/Client";
-import { ErrorResponse } from "../types/ErrorResponse";
+import { ErrorCodes, ErrorResponse } from "../types/ErrorResponse";
 import { Request } from "../types/Request";
 import { Response } from "../types/Response";
+import { ResponseError } from "./errors/ResponseError";
 import { RequestsManager } from "./RequestsManager";
 
-export class WebSocketManager {
+export class Server {
     private webSocketServer: WebSocketServer;
-    private requestsManager: RequestsManager;
+    private requestsManager = new RequestsManager();
 
-    constructor(
-        requestsManager: RequestsManager,
-        wsServerOptions: ServerOptions
-    ) {
-        this.requestsManager = requestsManager;
-        this.webSocketServer = new WebSocketServer(wsServerOptions);
+    constructor(options: ServerOptions, private debug = false) {
+        this.webSocketServer = new WebSocketServer(options);
+
         this.webSocketServer.on("connection", (ws: WebSocketClient) =>
             this.connectHandler(ws)
         );
 
         const interval = setInterval(() => {
-            this.webSocketServer.clients.forEach((ws) => {
-                const _ws = ws as WebSocketClient; // Странно работает strict в ts
+            (this.webSocketServer.clients as Set<WebSocketClient>).forEach(
+                (ws) => {
+                    if (!ws.isAlive) return ws.terminate();
 
-                if (!_ws.isAlive) return _ws.terminate();
+                    ws.isAlive = false;
+                    ws.ping();
+                }
+            );
+        }, 30000);
 
-                _ws.isAlive = false;
-                _ws.ping();
-            });
-        }, 10000);
+        this.webSocketServer.on("close", () => clearInterval(interval));
+    }
 
-        this.webSocketServer.on("close", () => {
-            clearInterval(interval);
-        });
+    public registerRequest(request: AbstractRequest): void {
+        this.requestsManager.registerRequest(request);
     }
 
     private connectHandler(ws: WebSocketClient): void {
-        ws.on("ping", ws.pong); // TODO check if this is needed
+        ws.on("ping", ws.pong);
         ws.on("pong", () => (ws.isAlive = true));
 
         // Shortcut for sending a message to the client
@@ -49,34 +50,32 @@ export class WebSocketManager {
 
         // Handle incoming requests
         ws.on("message", async (message: string) => {
-            console.log(`WebSocket request: ${message}`);
+            if (this.debug) console.log(`WebSocket request: ${message}`);
+
             let parsedMessage: Request;
 
             try {
                 parsedMessage = JSON.parse(message);
             } catch (error) {
-                return ws.sendResponse({
-                    error: {
-                        message: "Invalid JSON",
-                        code: 100,
-                    },
-                });
+                return ws.sendResponse(
+                    new ResponseError(
+                        "Parse error",
+                        ErrorCodes.ParseError
+                    ).toJSON()
+                );
             }
 
-            if (parsedMessage.method === undefined) {
-                return ws.sendResponse({
-                    error: {
-                        message: "Invalid request",
-                        code: 101,
-                    },
-                });
-            }
+            // TODO validate request (-32600)
 
             const response = await this.requestsManager.getRequest(
                 parsedMessage,
                 ws
             );
-            console.log(`WebSocket response: ${JSON.stringify(response)}`);
+
+            if (this.debug) {
+                console.log(`WebSocket response: ${JSON.stringify(response)}`);
+            }
+
             ws.sendResponse({
                 id: parsedMessage.id,
                 ...response,

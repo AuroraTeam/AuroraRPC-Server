@@ -1,11 +1,11 @@
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type RequestParams = any;
+import { JsonValue } from "./utils/Json";
+import { WithId } from "./utils/WithId";
+
+export type RequestParams = JsonValue;
 
 export interface BaseRequest {
     method: string;
-    params: RequestParams;
+    params?: RequestParams;
 }
 
-export interface Request extends BaseRequest {
-    id?: number | string;
-}
+export type Request = WithId<BaseRequest>;

@@ -1,4 +1,4 @@
-import { WebSocket } from "ws";
+import WebSocket from "ws";
 
 import { ErrorResponse } from "./ErrorResponse";
 import { Response } from "./Response";

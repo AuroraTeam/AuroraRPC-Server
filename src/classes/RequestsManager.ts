@@ -1,14 +1,19 @@
 import { AbstractRequest } from "../types/AbstractRequest";
 import { WebSocketClient } from "../types/Client";
-import { ErrorResponse } from "../types/ErrorResponse";
+import { ErrorCodes, ErrorResponse } from "../types/ErrorResponse";
 import { Request } from "../types/Request";
 import { Response } from "../types/Response";
-import { ResponseError } from "./ResponseError";
+import { ResponseError } from "./errors/ResponseError";
 
 export class RequestsManager {
     private requests: Map<string, AbstractRequest> = new Map();
 
     public registerRequest(request: AbstractRequest): void {
+        if (this.requests.has(request.method)) {
+            throw new Error(
+                `Request with method ${request.method} already registered`
+            );
+        }
         this.requests.set(request.method, request);
     }
 
@@ -16,24 +21,24 @@ export class RequestsManager {
         { params, method }: Request,
         ws: WebSocketClient
     ): Promise<Response | ErrorResponse> {
-        if (!this.requests.has(method))
-            return new ResponseError(102, "Unknown request method").toJSON();
+        const request = this.requests.get(method);
+
+        if (!request) {
+            return new ResponseError(
+                "Method not found",
+                ErrorCodes.MethodNotFound
+            ).toJSON();
+        }
 
         try {
-            // // Проверка авторизации пользователя
-            // // Если пользователь не авторизован - дропать, если запрос не с авторизацией
-            // if (!ws.isAuthed && method !== "auth")
-            //     throw new ResponseError(201, "Aвторизуйтесь");
-            // // Если пользователь авторизован - дропать, если он пытается повторно авторизоваться, иначе скип
-            // if (ws.isAuthed && method === "auth")
-            //     throw new ResponseError(202, "Вы уже авторизованы");
-
-            return {
-                result: await this.requests.get(method)?.invoke(params, ws),
-            };
+            return { result: await request.invoke(ws, params) };
         } catch (error) {
             if (error instanceof ResponseError) return error.toJSON();
-            throw error; // TODO
+            console.error(error);
+            return new ResponseError(
+                "Internal error",
+                ErrorCodes.InternalError
+            ).toJSON();
         }
     }
 }

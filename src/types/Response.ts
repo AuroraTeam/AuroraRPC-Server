@@ -1,10 +1,10 @@
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type ResponseResult = any;
+import { JsonValue } from "./utils/Json";
+import { WithId } from "./utils/WithId";
+
+export type ResponseResult = JsonValue;
 
 export interface BaseResponse {
     result: ResponseResult;
 }
 
-export interface Response extends BaseResponse {
-    id?: number | string;
-}
+export type Response = WithId<BaseResponse>;
