@@ -31,7 +31,7 @@ export class RequestsManager {
         }
 
         try {
-            return { result: await request.invoke(ws, params) };
+            return { result: await request.invoke(params, ws) };
         } catch (error) {
             if (error instanceof ResponseError) return error.toJSON();
             console.error(error);

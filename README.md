@@ -26,9 +26,9 @@ const server = new Server({
 
 // --- Create a request handler ---
 
-import { AbstractRequest, RequestParams } from 'aurora-rpc-server';
+import { JsonObject, RequestParams } from 'aurora-rpc-server';
 
-class HelloRequest extends AbstractRequest {
+class HelloRequest extends JsonObject {
     method = "hello"
 
     invoke(): RequestParams {

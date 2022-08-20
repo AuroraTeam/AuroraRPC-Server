@@ -1,6 +1,6 @@
 {
-    "name": "aurorarpc-server",
-    "version": "0.1.0",
+    "name": "aurora-rpc-server",
+    "version": "0.1.1",
     "description": "Aurora RPC Server implementation",
     "main": "dist/node.cjs",
     "types": "./dist/types/index.d.ts",
