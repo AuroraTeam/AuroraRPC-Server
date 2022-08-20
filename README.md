@@ -26,12 +26,12 @@ const server = new Server({
 
 // --- Create a request handler ---
 
-import { AbstractRequest, RequestParams } from 'aurora-rpc-server';
+import { AbstractRequest, ResponseResult } from 'aurora-rpc-server';
 
 class HelloRequest extends AbstractRequest {
     method = "hello"
 
-    invoke(): RequestParams {
+    invoke(): ResponseResult {
         return "Hello Aurora RPC!";
     }
 }
