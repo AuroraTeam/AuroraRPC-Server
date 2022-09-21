@@ -12,6 +12,7 @@ export class Server {
     private webSocketServer: WebSocketServer;
     private requestsManager = new RequestsManager();
 
+    // TODO Custom debug func
     constructor(options: ServerOptions, private debug = false) {
         this.webSocketServer = new WebSocketServer(options);
 
@@ -65,8 +66,6 @@ export class Server {
                 );
             }
 
-            // TODO validate request (-32600)
-
             const response = await this.requestsManager.getRequest(
                 parsedMessage,
                 ws
@@ -77,8 +76,8 @@ export class Server {
             }
 
             ws.sendResponse({
-                id: parsedMessage.id,
                 ...response,
+                id: parsedMessage.id,
             });
         });
     }
