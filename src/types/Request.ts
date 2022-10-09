@@ -1,7 +1,6 @@
-import { JsonValue } from "./utils/Json";
 import { WithId } from "./utils/WithId";
 
-export type RequestParams = JsonValue;
+export type RequestParams = unknown;
 
 export interface BaseRequest {
     method: string;

@@ -1,7 +1,6 @@
-import { JsonValue } from "./utils/Json";
 import { WithId } from "./utils/WithId";
 
-export type ResponseResult = JsonValue;
+export type ResponseResult = unknown;
 
 export interface BaseResponse {
     result: ResponseResult;
