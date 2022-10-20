@@ -1,6 +1,6 @@
 {
     "name": "aurora-rpc-server",
-    "version": "0.1.4",
+    "version": "0.1.5",
     "description": "Aurora RPC Server implementation",
     "type": "commonjs",
     "main": "./dist/index.js",
