@@ -17,5 +17,5 @@ export enum ErrorCodes {
     InvalidParams = -32602,
     InternalError = -32603,
     // JSON RPC 2.0 errors - custom
-    ResponseError = -32000,
+    ResponseError = -32500,
 }

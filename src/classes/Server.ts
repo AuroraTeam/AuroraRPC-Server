@@ -13,11 +13,14 @@ export class Server {
     private requestsManager = new RequestsManager();
 
     // TODO Custom debug func
-    constructor(options: ServerOptions, private debug = false) {
+    constructor(
+        options: ServerOptions,
+        private debug = false,
+    ) {
         this.webSocketServer = new WebSocketServer(options);
 
         this.webSocketServer.on("connection", (ws: WebSocketClient) =>
-            this.connectHandler(ws)
+            this.connectHandler(ws),
         );
 
         const interval = setInterval(() => {
@@ -27,7 +30,7 @@ export class Server {
 
                     ws.isAlive = false;
                     ws.ping();
-                }
+                },
             );
         }, 30000);
 
@@ -61,14 +64,23 @@ export class Server {
                 return ws.sendResponse(
                     new ResponseError(
                         "Parse error",
-                        ErrorCodes.ParseError
-                    ).toJSON()
+                        ErrorCodes.ParseError,
+                    ).toJSON(),
+                );
+            }
+
+            if (typeof parsedMessage.method !== "string") {
+                return ws.sendResponse(
+                    new ResponseError(
+                        "Invalid request",
+                        ErrorCodes.InvalidRequest,
+                    ).toJSON(),
                 );
             }
 
             const response = await this.requestsManager.getRequest(
                 parsedMessage,
-                ws
+                ws,
             );
 
             if (this.debug) {

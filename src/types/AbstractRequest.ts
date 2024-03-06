@@ -7,7 +7,7 @@ export abstract class AbstractRequest {
     public abstract readonly method: string;
 
     public abstract invoke(
-        data: RequestParams | undefined,
-        ws: WebSocketClient
+        params: RequestParams | undefined,
+        ws: WebSocketClient,
     ): PromiseOr<ResponseResult>;
 }

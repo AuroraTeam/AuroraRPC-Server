@@ -6,27 +6,27 @@ import { Response } from "../types/Response";
 import { ResponseError } from "./errors/ResponseError";
 
 export class RequestsManager {
-    private requests: Map<string, AbstractRequest> = new Map();
+    #requests: Map<string, AbstractRequest> = new Map();
 
-    public registerRequest(request: AbstractRequest): void {
-        if (this.requests.has(request.method)) {
+    registerRequest(request: AbstractRequest): void {
+        if (this.#requests.has(request.method)) {
             throw new Error(
-                `Request with method ${request.method} already registered`
+                `Request with method ${request.method} already registered`,
             );
         }
-        this.requests.set(request.method, request);
+        this.#requests.set(request.method, request);
     }
 
-    public async getRequest(
+    async getRequest(
         { params, method }: Request,
-        ws: WebSocketClient
+        ws: WebSocketClient,
     ): Promise<Response | ErrorResponse> {
-        const request = this.requests.get(method);
+        const request = this.#requests.get(method);
 
         if (!request) {
             return new ResponseError(
                 "Method not found",
-                ErrorCodes.MethodNotFound
+                ErrorCodes.MethodNotFound,
             ).toJSON();
         }
 
@@ -37,7 +37,7 @@ export class RequestsManager {
             console.error(error);
             return new ResponseError(
                 "Internal error",
-                ErrorCodes.InternalError
+                ErrorCodes.InternalError,
             ).toJSON();
         }
     }

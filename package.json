@@ -1,6 +1,6 @@
 {
     "name": "aurora-rpc-server",
-    "version": "0.1.5",
+    "version": "0.1.6",
     "description": "Aurora RPC Server implementation",
     "type": "commonjs",
     "main": "./dist/index.js",
@@ -8,7 +8,8 @@
     "types": "./dist/index.d.ts",
     "exports": {
         "import": "./dist/index.mjs",
-        "require": "./dist/index.js"
+        "require": "./dist/index.js",
+        "types": "./dist/index.d.ts"
     },
     "scripts": {
         "build": "tsup",
@@ -39,24 +40,22 @@
         "ws": "^8.8.1"
     },
     "devDependencies": {
-        "@tsconfig/node16": "^1.0.3",
-        "@types/node": "^16.11.49",
-        "@types/source-map-support": "^0.5.4",
+        "@tsconfig/node20": "^20.1.2",
+        "@types/node": "^20.11.25",
         "@types/ws": "^8.5.3",
-        "@typescript-eslint/eslint-plugin": "^5.33.1",
-        "@typescript-eslint/parser": "^5.33.1",
+        "@typescript-eslint/eslint-plugin": "^7.1.1",
+        "@typescript-eslint/parser": "^7.1.1",
         "eslint": "^8.22.0",
-        "eslint-config-prettier": "^8.5.0",
+        "eslint-config-prettier": "^9.1.0",
         "import-sort-style-module": "^6.0.0",
-        "prettier": "2.7.1",
+        "prettier": "^3.2.5",
         "prettier-plugin-import-sort": "^0.0.7",
-        "source-map-support": "^0.5.21",
-        "tsup": "^6.2.3",
-        "typescript": "^4.7.4"
+        "tsup": "^8.0.2",
+        "typescript": "^5.0.4"
     },
     "optionalDependencies": {
         "bufferutil": "^4.0.6",
-        "utf-8-validate": "^5.0.9"
+        "utf-8-validate": "^6.0.3"
     },
     "importSort": {
         ".js, .ts": {
