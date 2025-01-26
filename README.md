@@ -1,5 +1,9 @@
 # AuroraRPC-Server
 
+> [!CAUTION]
+> This package is moved to [AuroraRPC](https://github.com/AuroraTeam/AuroraRPC) monorepo. Please use `@aurora-rpc/server` instead.
+
+
 ## Description
 
 This is the server implementation for Aurora RPC.  
